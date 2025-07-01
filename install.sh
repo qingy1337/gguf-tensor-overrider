@@ -12,6 +12,7 @@ if [ "$NODE_VERSION" -lt 22 ] || { [ "$NODE_VERSION" -eq 22 ] && [ "$(node -v | 
     exit 1
 fi
 
+
 # Create installation directory
 INSTALL_DIR="/usr/local/lib/gguf-tensor-overrider"
 BIN_FILE="/usr/local/bin/gguf-tensor-overrider"
@@ -34,9 +35,9 @@ if [ $? -ne 0 ]; then
 fi
 
 # Copy files to installation directory
-cp -r ./* "$INSTALL_DIR"
+git clone https://github.com/k-koehler/gguf-tensor-overrider "$INSTALL_DIR"
 if [ $? -ne 0 ]; then
-    echo "Failed to copy files to $INSTALL_DIR. Please check your permissions."
+    echo "Failed to clone repository to $INSTALL_DIR. Please check your internet connection or repository URL."
     exit 1
 fi
 
