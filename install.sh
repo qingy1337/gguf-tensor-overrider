@@ -63,7 +63,7 @@ if [ -f "$BIN_FILE" ]; then
 fi
 
 # Create binary file
-echo "node --experimental-strip-types --disable-warning=ExperimentalWarning $INSTALL_DIR/src/index.js" | sudo tee "$BIN_FILE" > /dev/null
+echo "node --experimental-strip-types --disable-warning=ExperimentalWarning $INSTALL_DIR/src/index.ts" | sudo tee "$BIN_FILE" > /dev/null
 if [ $? -ne 0 ]; then
     echo "Failed to create binary file $BIN_FILE. Please check your permissions."
     exit 1
