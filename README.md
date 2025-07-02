@@ -65,6 +65,12 @@ CMD="/home/user/llama.cpp/build/bin/llama-cli \
 eval "$CMD"
 ```
 
+## Gotchas (for now)
+
+- Only supports NVIDIA
+- Only supports llama.cpp
+- Only supports GGUF files from huggingface
+
 ## Can I use this code for xyz?
 
 Go wild. The code in this repository is free, open source, modifiable, distributable, whatever-the-fuck-you-wantable
