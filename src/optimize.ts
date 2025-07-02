@@ -538,7 +538,7 @@ export default function optimize({
     Log.log("info", `Tensor ${tensorName} allocated on device ${deviceName}`);
   }
 
-  let command = "-ngl 999 ";
+  let command = "-ngl 0 ";
   for (const [tensorName, deviceName] of Object.entries(allocator.tensorMap)) {
     command += `-ot "${tensorName}=${deviceName}" `;
   }
