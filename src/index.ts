@@ -4,6 +4,7 @@ import optimize from "./optimize.ts";
 import getRamBytes from "./system.ts";
 import { downloadGguf } from "./gguf.ts";
 import Log from "./log.ts";
+// import fs from "fs";
 
 const program = new Command();
 program
@@ -76,6 +77,14 @@ program
           return percentage;
         });
     }
+    // fs.writeFileSync(
+    //   "dump.json",
+    //   JSON.stringify(await downloadGguf(ggufUrl), (key, value) =>
+    //     typeof value === "bigint" ? Number(value) : value
+    //   )
+    // );
+
+    // throw new Error("debug");
     optimize({
       gguf: await downloadGguf(ggufUrl),
       gpus: getNvidiaGpus(),
