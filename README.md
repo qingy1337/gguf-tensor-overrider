@@ -45,7 +45,7 @@ Tired of fucking around with `--tensor-override` regexes in llama.cpp? This tool
 
 ## How can I pipe this into my llama command?
 
-Here's example of how you can pipe the arguments into your llama command using xargs
+Here's example of how you can pipe the arguments into your llama command (AI generated slop, but seems to work)
 
 ```bash
 #!/bin/bash
