@@ -5,7 +5,7 @@
 To install run the following command
 
 ```bash
-curl https://raw.githubusercontent.com/k-koehler/gguf-tensor-overrider/refs/heads/main/install.sh| sudo /bin/bash
+curl https://raw.githubusercontent.com/k-koehler/gguf-tensor-overrider/refs/heads/main/install.sh | sudo /bin/bash
 ```
 
 ## Example Command
@@ -61,9 +61,16 @@ CMD="/home/user/llama.cpp/build/bin/llama-cli \
   -sm row \
   $TENSOR_OVERRIDES"
 
-# Execute command directly (no pipe)
+# Execute command directly
 eval "$CMD"
 ```
+
+## Gotchas (for now)
+
+- Only supports NVIDIA
+- Only supports llama.cpp
+- Only supports GGUF files from huggingface
+- Only supports Qwen, Llama, dots, and DeepSeek architectures
 
 ## Can I use this code for xyz?
 
