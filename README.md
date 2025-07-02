@@ -5,7 +5,7 @@
 To install run the following command
 
 ```bash
-curl https://raw.githubusercontent.com/k-koehler/gguf-tensor-overrider/refs/heads/main/install.sh| sudo /bin/bash
+curl https://raw.githubusercontent.com/k-koehler/gguf-tensor-overrider/refs/heads/main/install.sh | sudo /bin/bash
 ```
 
 ## Example Command
