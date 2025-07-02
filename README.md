@@ -1,6 +1,3 @@
-Here's the corrected version with fixed typos and improved formatting:
-
-````
 # gguf-tensor-overrider
 
 ## Install
