@@ -61,7 +61,7 @@ CMD="/home/user/llama.cpp/build/bin/llama-cli \
   -sm row \
   $TENSOR_OVERRIDES"
 
-# Execute command directly (no pipe)
+# Execute command directly
 eval "$CMD"
 ```
 
