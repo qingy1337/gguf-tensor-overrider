@@ -178,12 +178,14 @@ function modelFitsInMemory({
   ramBytes,
   contextLength,
   contextQuantizationSize,
+  gpuPercentage,
 }: {
   gguf: GGUFParseOutput;
   gpus: Gpu[];
   ramBytes: number;
   contextLength: number;
   contextQuantizationSize: number;
+  gpuPercentage: number;
 }): boolean {
   const kvSize = calculateKvCacheSizeBytes(
     gguf,
@@ -192,10 +194,8 @@ function modelFitsInMemory({
   );
   const tensorSize = calculateTensorsSizeBytes(gguf);
   const totalModelSize = kvSize + tensorSize;
-  const totalGpuMemory = gpus.reduce(
-    (acc, gpu) => acc + gpu.memoryTotalBytes,
-    0
-  );
+  const totalGpuMemory =
+    gpus.reduce((acc, gpu) => acc + gpu.memoryTotalBytes, 0) * gpuPercentage;
   const totalRamMemory = ramBytes;
   const totalMemory = totalGpuMemory + totalRamMemory;
   return totalModelSize <= totalMemory;
@@ -206,16 +206,23 @@ class Device {
   public readonly memoryTotalBytes: number;
   public readonly priority: number;
   public bytesAllocated: number = 0;
+  public utilizationPercentage: number = 0.9;
   private unsafe: boolean = false;
 
-  constructor(name: string, memoryTotalBytes: number, priority: number) {
+  constructor(
+    name: string,
+    memoryTotalBytes: number,
+    priority: number,
+    gpuPercentage
+  ) {
     this.name = name;
     this.memoryTotalBytes = memoryTotalBytes;
     this.priority = priority;
+    this.utilizationPercentage = gpuPercentage;
   }
 
   private get safeMemoryTotalBytes(): number {
-    return this.memoryTotalBytes * 0.9;
+    return this.memoryTotalBytes * this.utilizationPercentage;
   }
 
   public canAllocate(requiredMemoryBytes: number): boolean {
@@ -295,6 +302,7 @@ export default function optimize({
   contextLength,
   contextQuantizationSize,
   check = true,
+  gpuPercentage = 0.9,
 }: {
   gguf: GGUFParseOutput;
   gpus: Gpu[];
@@ -302,6 +310,7 @@ export default function optimize({
   contextLength: number;
   contextQuantizationSize: number;
   check: boolean;
+  gpuPercentage?: number;
 }): void {
   if (
     check &&
@@ -311,6 +320,7 @@ export default function optimize({
       ramBytes,
       contextLength,
       contextQuantizationSize,
+      gpuPercentage,
     })
   ) {
     throw new Error(
@@ -318,7 +328,7 @@ export default function optimize({
     );
   }
   const metadata = extractMetadata(gguf);
-  const cpuDevice = new Device("CPU", ramBytes, 0);
+  const cpuDevice = new Device("CPU", ramBytes, 0, 1);
   if (!check) {
     cpuDevice.setUnsafe();
   }
@@ -327,9 +337,11 @@ export default function optimize({
       new Device(
         `CUDA${gpu.cudaId}`,
         gpu.memoryTotalBytes,
-        gpu.memoryTotalBytes
+        gpu.memoryTotalBytes,
+        gpuPercentage
       ) // Use GPU memory as priority as a heuristic for computation power
   );
+
   const allocator = new DeviceAllocator([cpuDevice, ...gpuDevices]);
   const seen = new Set<string>();
 
