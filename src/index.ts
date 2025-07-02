@@ -22,6 +22,10 @@ program
     "--no-check",
     "Skip system resource limits check. Useful for when you're using swap"
   )
+  .option(
+    "--gpu-percentage <percentage>",
+    "Percentage of GPU memory to use for allocation. Default is 0.9"
+  )
   .option("--verbose", "Enable verbose logging")
   .action(async (options) => {
     if (options.verbose) {
@@ -54,6 +58,9 @@ program
       contextLength: +contextLength,
       contextQuantizationSize: +contextQuantizationSize,
       check: options.check,
+      gpuPercentage: options.gpuPercentage
+        ? parseFloat(options.gpuPercentage)
+        : undefined,
     });
   });
 await program.parseAsync(process.argv);
