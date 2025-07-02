@@ -303,6 +303,7 @@ export default function optimize({
   contextQuantizationSize,
   check = true,
   gpuPercentage = 0.9,
+  granularGpuPercentage,
 }: {
   gguf: GGUFParseOutput;
   gpus: Gpu[];
@@ -311,6 +312,7 @@ export default function optimize({
   contextQuantizationSize: number;
   check: boolean;
   gpuPercentage?: number;
+  granularGpuPercentage?: number[];
 }): void {
   if (
     check &&
@@ -341,6 +343,20 @@ export default function optimize({
         gpuPercentage
       ) // Use GPU memory as priority as a heuristic for computation power
   );
+  if (granularGpuPercentage) {
+    if (granularGpuPercentage.length !== gpuDevices.length) {
+      throw new Error(
+        `Granular GPU percentages length (${granularGpuPercentage.length}) does not match number of GPUs (${gpuDevices.length}).`
+      );
+    }
+    for (let i = 0; i < gpuDevices.length; i++) {
+      const cudaId = gpus[i].cudaId;
+      const device = gpuDevices.find((d) => d.name === `CUDA${cudaId}`);
+      if (device) {
+        device.utilizationPercentage = granularGpuPercentage[i];
+      }
+    }
+  }
 
   const allocator = new DeviceAllocator([cpuDevice, ...gpuDevices]);
   const seen = new Set<string>();
