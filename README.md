@@ -70,6 +70,7 @@ eval "$CMD"
 - Only supports NVIDIA
 - Only supports llama.cpp
 - Only supports GGUF files from huggingface
+- Only supports Qwen, Llama, dots, and DeepSeek architectures
 
 ## Can I use this code for xyz?
 
