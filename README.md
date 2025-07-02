@@ -41,7 +41,8 @@ Tired of fucking around with `--tensor-override` regexes in llama.cpp? This tool
 2. `-c` `--context-length` The context length you're passing to llama.cpp. `gguf-tensor-overrider` uses this to estimate the kv cache of the model in order to safely allocate attention tensors
 3. `q` `--context-quantization-size` The quantization type of the kv cache. Right now it assumed both k and v are quantized to the same type
 4. `--check` `--no-check` Check if your system can handle the allocation without using swap
-5. `--verbose` Logs a bunch of shit. Useful to see where things are being allocated
+5. `--gpu-percentage` (default 0.9) How much of the GPU(s) to use for allocation. Useful if my script didn't allocate the cache accurately
+6. `--verbose` Logs a bunch of shit. Useful to see where things are being allocated
 
 ## How can I pipe this into my llama command?
 
