@@ -215,7 +215,7 @@ class Device {
   }
 
   private get safeMemoryTotalBytes(): number {
-    return this.memoryTotalBytes * 0.95;
+    return this.memoryTotalBytes * 0.9;
   }
 
   public canAllocate(requiredMemoryBytes: number): boolean {
