@@ -283,7 +283,12 @@ export default function optimize({
     cpuDevice.setUnsafe();
   }
   const gpuDevices = gpus.map(
-    (gpu) => new Device(gpu.name, gpu.memoryTotalBytes, gpu.memoryTotalBytes) // Use GPU memory as priority as a heuristic for computation power
+    (gpu) =>
+      new Device(
+        `CUDA${gpu.cudaId}`,
+        gpu.memoryTotalBytes,
+        gpu.memoryTotalBytes
+      ) // Use GPU memory as priority as a heuristic for computation power
   );
   const allocator = new DeviceAllocator([cpuDevice, ...gpuDevices]);
   const seen = new Set<string>();

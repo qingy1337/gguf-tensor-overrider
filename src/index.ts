@@ -1,13 +1,3 @@
-process.removeAllListeners("warning").on("warning", (err) => {
-  if (
-    err.name !== "ExperimentalWarning" &&
-    !err.message.includes("experimental")
-  ) {
-    console.warn(err);
-  }
-});
-
-import { gguf } from "@huggingface/gguf";
 import { Command } from "commander";
 import { getNvidiaGpus } from "./nvidia.ts";
 import optimize from "./optimize.ts";
