@@ -339,26 +339,24 @@ export default function optimize({
   const ffnTensorNameFlags = ["ffn", "feed_forward"];
   const ffnTensorNameNoFlags = ["exp", "expert", "gate", "norm"];
   let totalFfnBytes = 0;
-  for (const block of tensorsBlockwise(gguf)) {
-    for (const tensor of block) {
-      if (
-        !ffnTensorNameFlags.some((keyword) =>
-          tensor.name.toLowerCase().includes(keyword)
-        ) ||
-        ffnTensorNameNoFlags.some((keyword) =>
-          tensor.name.toLowerCase().includes(keyword)
-        )
-      ) {
-        continue;
-      }
-      if (seen.has(tensor.name)) {
-        continue;
-      }
-      const tensorSize = calculateTensorSizeBytes(tensor);
-      allocator.allocate(tensorSize, tensor.name);
-      totalFfnBytes += tensorSize;
-      seen.add(tensor.name);
+  for (const tensor of gguf.tensorInfos) {
+    if (
+      !ffnTensorNameFlags.some((keyword) =>
+        tensor.name.toLowerCase().includes(keyword)
+      ) ||
+      ffnTensorNameNoFlags.some((keyword) =>
+        tensor.name.toLowerCase().includes(keyword)
+      )
+    ) {
+      continue;
     }
+    if (seen.has(tensor.name)) {
+      continue;
+    }
+    const tensorSize = calculateTensorSizeBytes(tensor);
+    allocator.allocate(tensorSize, tensor.name);
+    totalFfnBytes += tensorSize;
+    seen.add(tensor.name);
   }
   Log.log(
     "info",
@@ -379,23 +377,21 @@ export default function optimize({
   // allocate the expert gate tensors
   const gateTensorNameFlags = ["gate"];
   let totalGateBytes = 0;
-  for (const block of tensorsBlockwise(gguf)) {
-    for (const tensor of block) {
-      if (
-        !gateTensorNameFlags.some((keyword) =>
-          tensor.name.toLowerCase().includes(keyword)
-        )
-      ) {
-        continue;
-      }
-      if (seen.has(tensor.name)) {
-        continue;
-      }
-      const tensorSize = calculateTensorSizeBytes(tensor);
-      allocator.allocate(tensorSize, tensor.name);
-      totalGateBytes += tensorSize;
-      seen.add(tensor.name);
+  for (const tensor of gguf.tensorInfos) {
+    if (
+      !gateTensorNameFlags.some((keyword) =>
+        tensor.name.toLowerCase().includes(keyword)
+      )
+    ) {
+      continue;
     }
+    if (seen.has(tensor.name)) {
+      continue;
+    }
+    const tensorSize = calculateTensorSizeBytes(tensor);
+    allocator.allocate(tensorSize, tensor.name);
+    totalGateBytes += tensorSize;
+    seen.add(tensor.name);
   }
   Log.log(
     "info",
@@ -414,23 +410,21 @@ export default function optimize({
   // fourth pass, allocate the norm tensors
   const normTensorNameFlags = ["norm"];
   let totalNormBytes = 0;
-  for (const block of tensorsBlockwise(gguf)) {
-    for (const tensor of block) {
-      if (
-        !normTensorNameFlags.some((keyword) =>
-          tensor.name.toLowerCase().includes(keyword)
-        )
-      ) {
-        continue;
-      }
-      if (seen.has(tensor.name)) {
-        continue;
-      }
-      const tensorSize = calculateTensorSizeBytes(tensor);
-      allocator.allocate(tensorSize, tensor.name);
-      totalNormBytes += tensorSize;
-      seen.add(tensor.name);
+  for (const tensor of gguf.tensorInfos) {
+    if (
+      !normTensorNameFlags.some((keyword) =>
+        tensor.name.toLowerCase().includes(keyword)
+      )
+    ) {
+      continue;
     }
+    if (seen.has(tensor.name)) {
+      continue;
+    }
+    const tensorSize = calculateTensorSizeBytes(tensor);
+    allocator.allocate(tensorSize, tensor.name);
+    totalNormBytes += tensorSize;
+    seen.add(tensor.name);
   }
   Log.log(
     "info",
@@ -448,16 +442,14 @@ export default function optimize({
 
   // fifth pass, allocate the rest of the tensors
   let totalRestBytes = 0;
-  for (const block of tensorsBlockwise(gguf)) {
-    for (const tensor of block) {
-      if (seen.has(tensor.name)) {
-        continue;
-      }
-      const tensorSize = calculateTensorSizeBytes(tensor);
-      allocator.allocate(tensorSize, tensor.name);
-      totalRestBytes += tensorSize;
-      seen.add(tensor.name);
+  for (const tensor of gguf.tensorInfos) {
+    if (seen.has(tensor.name)) {
+      continue;
     }
+    const tensorSize = calculateTensorSizeBytes(tensor);
+    allocator.allocate(tensorSize, tensor.name);
+    totalRestBytes += tensorSize;
+    seen.add(tensor.name);
   }
   Log.log(
     "info",
