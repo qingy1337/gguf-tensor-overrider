@@ -1,1 +1,70 @@
 # gguf-tensor-overrider
+
+## Install
+
+To install run the following command
+
+```bash
+curl https://raw.githubusercontent.com/k-koehler/gguf-tensor-overrider/refs/heads/main/install.sh| sudo /bin/bash
+```
+
+## Example Command
+
+```bash
+gguf-tensor-overrider -g https://huggingface.co/unsloth/Qwen3-235B-A22B-GGUF/resolve/main/UD-Q4_K_XL/Qwen3-235B-A22B-UD-Q4_K_XL-00001-of-00003.gguf -c 32000 --no-check --verbose
+```
+
+## Purpose
+
+Tired of fucking around with `--tensor-override` regexes in llama.cpp? This tool aims to automatically allocate tensors optimally across your GPUs and CPUs.
+
+## How it works
+
+`gguf-tensor-overrider` does the following:
+
+1. Downloads and extracts metadata for a model from Huggingface, including the complete list of tensors
+2. Iterates over each tensor and assigns it to GPU (if available) and then to CPU
+3. `gguf-tensor-overrider` uses multiple passes trying to assign the most critical tensors to GPU before less critical ones. For example, in a MoE model, `gguf-tensor-overrider` will assign expert tensors last
+4. Generates an output like `-ot "tensor_name_1=<device> -ot "tensor_name_2=<device>`
+
+`gguf-tensor-overrider` uses the following priority in tensor allocation:
+
+1. Attention tensors. `gguf-tensor-overrider` attempts to estimate kv cache size to ensure the device allocates these tensor bytes accurately
+2. FFN tensors
+3. Gate tensors
+4. Norm tensors
+5. Expert tensors and other tensors
+
+## Options
+
+1. `-g` `--gguf-url` The Hugginface URL for the GGUF. In the case of multipart GGUFs, `gguf-tensor-overrider` automatically parses them of you provide the first file.
+2. `-c` `--context-length` The context length you're passing to llama.cpp. `gguf-tensor-overrider` uses this to estimate the kv cache of the model in order to safely allocate attention tensors
+3. `q` `--context-quantization-size` The quantization type of the kv cache. Right now it assumed both k and v are quantized to the same type
+4. `--check` `--no-check` Check if your system can handle the allocation without using swap
+5. `--verbose` Logs a bunch of shit. Useful to see where things are being allocated
+
+## How can I pipe this into my llama command?
+
+Here's example of how you can pipe the arguments into your llama command using xargs
+
+```bash
+#!/bin/bash
+
+# Generate tensor overrides
+TENSOR_OVERRIDES=$(gguf-tensor-overrider -g https://huggingface.co/Qwen/Qwen3-32B-GGUF/resolve/main/Qwen3-32B-Q8_0.gguf -c 32000)
+
+# Build command with tensor overrides
+CMD="/home/user/llama.cpp/build/bin/llama-cli \
+  -m qwen3_32/qwen3_32b.gguf \
+  -c 32000 \
+  -fa \
+  -sm row \
+  $TENSOR_OVERRIDES"
+
+# Execute command directly (no pipe)
+eval "$CMD"
+```
+
+## Can I use this code for xyz?
+
+Go wild. The code in this repository is free, open source, modifiable, distributable, whatever-the-fuck-you-wantable
