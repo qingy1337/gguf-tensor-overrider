@@ -81,6 +81,46 @@ function extractMetadata(gguf: GGUFParseOutput): {
           gguf.metadata["qwen3.embedding_length"] /
           gguf.metadata["qwen3.attention.head_count"],
       };
+    case "llama4" as string:
+      return {
+        hiddenSize: gguf.metadata["llama4.embedding_length"],
+        numAttentionHeads: gguf.metadata["llama4.attention.head_count"],
+        numLayers: gguf.metadata["llama4.block_count"],
+        numKeyValueHeads: gguf.metadata["llama4.attention.head_count_kv"],
+        headSize:
+          gguf.metadata["llama4.embedding_length"] /
+          gguf.metadata["llama4.attention.head_count"],
+      };
+    case "llama":
+      return {
+        hiddenSize: gguf.metadata["llama.embedding_length"],
+        numAttentionHeads: gguf.metadata["llama.attention.head_count"],
+        numLayers: gguf.metadata["llama.block_count"],
+        numKeyValueHeads: gguf.metadata["llama.attention.head_count_kv"]!,
+        headSize:
+          gguf.metadata["llama.embedding_length"] /
+          gguf.metadata["llama.attention.head_count"],
+      };
+    case "dots1" as string:
+      return {
+        hiddenSize: gguf.metadata["dots1.embedding_length"],
+        numAttentionHeads: gguf.metadata["dots1.attention.head_count"],
+        numLayers: gguf.metadata["dots1.block_count"],
+        numKeyValueHeads: gguf.metadata["dots1.attention.head_count_kv"],
+        headSize:
+          gguf.metadata["dots1.embedding_length"] /
+          gguf.metadata["dots1.attention.head_count"],
+      };
+    case "deepseek2":
+      return {
+        hiddenSize: gguf.metadata["deepseek2.embedding_length"],
+        numAttentionHeads: gguf.metadata["deepseek2.attention.head_count"],
+        numLayers: gguf.metadata["deepseek2.block_count"],
+        numKeyValueHeads: gguf.metadata["deepseek2.attention.head_count_kv"]!,
+        headSize:
+          gguf.metadata["deepseek2.embedding_length"] /
+          gguf.metadata["deepseek2.attention.head_count"],
+      };
     default:
       throw new Error(
         `Unsupported architecture: ${gguf.metadata["general.architecture"]}`
