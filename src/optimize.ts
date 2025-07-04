@@ -276,6 +276,29 @@ class DeviceAllocator {
       )} MiB on any device.`
     );
   }
+
+  public allocateOnDevice(
+    deviceName: string,
+    requiredMemoryBytes: number,
+    tensorName?: string
+  ): Device {
+    const device = this.devices.find((d) => d.name === deviceName);
+    if (!device) {
+      throw new Error(`Device ${deviceName} not found.`);
+    }
+    if (!device.canAllocate(requiredMemoryBytes)) {
+      throw new Error(
+        `Cannot allocate ${bytesToMiB(requiredMemoryBytes).toFixed(
+          2
+        )} MiB on device ${deviceName}.`
+      );
+    }
+    device.alloc(requiredMemoryBytes);
+    if (tensorName) {
+      this.tensorMap[tensorName] = device.name;
+    }
+    return device;
+  }
 }
 
 function tensorsBlockwise(
@@ -360,6 +383,23 @@ export default function optimize({
 
   const allocator = new DeviceAllocator([cpuDevice, ...gpuDevices]);
   const seen = new Set<string>();
+
+  // allocate the emedding tensor to CPU
+  // this is because llama.cpp doesn't support some quantization types on GPU for embedding tensors
+  const embeddingTensor = gguf.tensorInfos.find(
+    (tensor) => tensor.name === "token_embd.weight"
+  );
+  if (embeddingTensor) {
+    const embeddingSize = calculateTensorSizeBytes(embeddingTensor);
+    allocator.allocate(embeddingSize, embeddingTensor.name);
+    seen.add(embeddingTensor.name);
+    Log.log(
+      "info",
+      `Embedding tensor ${embeddingTensor.name} allocated on CPU: ${bytesToMiB(
+        embeddingSize
+      ).toFixed(2)} MiB`
+    );
+  }
 
   // first pass
   // blockwise enumerate over tensors for the purposes of allocating attention
