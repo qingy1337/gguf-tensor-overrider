@@ -391,7 +391,7 @@ export default function optimize({
   );
   if (embeddingTensor) {
     const embeddingSize = calculateTensorSizeBytes(embeddingTensor);
-    allocator.allocate(embeddingSize, embeddingTensor.name);
+    allocator.allocateOnDevice("CPU", embeddingSize, embeddingTensor.name);
     seen.add(embeddingTensor.name);
     Log.log(
       "info",
