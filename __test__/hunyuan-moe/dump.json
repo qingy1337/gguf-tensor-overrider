@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "version": 3,
+    "tensor_count": 4,
+    "kv_count": 1,
+    "general.architecture": "hunyuan-moe",
+    "hunyuan-moe.block_count": 2,
+    "hunyuan-moe.context_length": 2048,
+    "hunyuan-moe.embedding_length": 4096,
+    "hunyuan-moe.feed_forward_length": 3072,
+    "hunyuan-moe.attention.head_count": 32,
+    "hunyuan-moe.attention.head_count_kv": 8
+  },
+  "tensorInfos": [
+    {
+      "name": "token_embd.weight",
+      "n_dims": 2,
+      "shape": [4096, 128],
+      "dtype": 14,
+      "offset": 0
+    },
+    {
+      "name": "blk.0.attn_q.weight",
+      "n_dims": 2,
+      "shape": [4096, 4096],
+      "dtype": 14,
+      "offset": 1000
+    },
+    {
+      "name": "blk.0.ffn_gate_exps.weight",
+      "n_dims": 3,
+      "shape": [4096, 3072, 1],
+      "dtype": 14,
+      "offset": 2000
+    },
+    {
+      "name": "output.weight",
+      "n_dims": 2,
+      "shape": [128, 4096],
+      "dtype": 14,
+      "offset": 3000
+    }
+  ],
+  "tensorDataOffset": 0
+}
