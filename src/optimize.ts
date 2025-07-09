@@ -69,6 +69,16 @@ function extractMetadata(gguf: GGUFParseOutput): {
           gguf.metadata["qwen3moe.embedding_length"] /
           gguf.metadata["qwen3moe.attention.head_count"],
       };
+    case "hunyuan-moe" as string:
+      return {
+        hiddenSize: gguf.metadata["hunyuan-moe.embedding_length"],
+        numAttentionHeads: gguf.metadata["hunyuan-moe.attention.head_count"],
+        numLayers: gguf.metadata["hunyuan-moe.block_count"],
+        numKeyValueHeads: gguf.metadata["hunyuan-moe.attention.head_count_kv"],
+        headSize:
+          gguf.metadata["hunyuan-moe.embedding_length"] /
+          gguf.metadata["hunyuan-moe.attention.head_count"],
+      };
     case "qwen3" as string:
       return {
         hiddenSize: gguf.metadata["qwen3.embedding_length"],
