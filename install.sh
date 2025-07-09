@@ -35,7 +35,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Copy files to installation directory
-sudo git clone https://github.com/k-koehler/gguf-tensor-overrider "$INSTALL_DIR"
+sudo git clone https://github.com/qingy1337/gguf-tensor-overrider "$INSTALL_DIR"
 if [ $? -ne 0 ]; then
     echo "Failed to clone repository to $INSTALL_DIR. Please check your internet connection or repository URL."
     exit 1
